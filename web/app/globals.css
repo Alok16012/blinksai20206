@@ -1,0 +1,331 @@
+@import "tailwindcss";
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Design tokens.
+
+   The site alternates near-black and white bands (see `.band-dark` / `.band-light`
+   below). Rather than every component knowing which band it sits in, the surface,
+   text, muted and line tokens are CSS variables that the band sets — so `text-paper`
+   is white inside a dark band and near-black inside a light one, with no per-component
+   branching.
+
+   Fixed across both bands: `signal` (the amber that does the selling), `violet`
+   (AI/automation), `mint` (success), `alert` (errors).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@theme inline {
+  /* Band-aware — resolved by the nearest .band-* ancestor */
+  --color-ink: var(--surface);
+  --color-paper: var(--fg);
+  --color-mute: var(--muted);
+  --color-line: var(--line);
+  --color-deck: var(--raised);
+  --color-deck-2: var(--raised-2);
+  /* Accent as TEXT. Amber #FFB224 on white is 1.9:1 — nowhere near the 4.5:1 PRD §12
+     requires — so on light bands it resolves to a dark amber instead. `bg-signal` and
+     `border-signal` stay the bright brand amber in both bands; only text darkens. */
+  --color-accent: var(--accent);
+
+  /* Fixed */
+  --color-signal: #ffb224;
+  --color-violet: #7a5cff;
+  --color-mint: #12b981;
+  --color-alert: #e5484d;
+  --color-carbon: #111111;
+  --color-white: #ffffff;
+
+  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --font-sans: var(--font-inter-tight), "Inter Tight", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+  --font-deva: var(--font-noto-deva), var(--font-inter-tight), system-ui, sans-serif;
+
+  /* Display type is set in ALL CAPS at very tight leading — the industrial register
+     the brief asks for. Sizes are fluid; these are the ceilings. */
+  /* Ceiling is set by the longest display line the site actually uses
+     ("THEN WE FILL IT", 15 characters). Archivo at 125% width runs ~0.77em per
+     character, so 15ch needs ≈ 11.6× the font size — at a 1262px content column that
+     caps the type at ~104px. Go bigger and lines wrap inside their own clip, which
+     breaks the rise animation. */
+  --text-d0: clamp(2.25rem, 7.2vw, 6.5rem);
+  --text-d0--line-height: 0.92;
+  --text-d0--letter-spacing: -0.02em;
+  --text-d1: clamp(2.25rem, 6.4vw, 5.5rem);
+  --text-d1--line-height: 0.94;
+  --text-d1--letter-spacing: -0.015em;
+  --text-d2: clamp(1.875rem, 4.4vw, 3.75rem);
+  --text-d2--line-height: 0.98;
+  --text-d2--letter-spacing: -0.012em;
+  --text-d3: clamp(1.5rem, 2.6vw, 2.25rem);
+  --text-d3--line-height: 1.04;
+  --text-d4: clamp(1.125rem, 1.5vw, 1.375rem);
+  --text-d4--line-height: 1.15;
+  /* Stat slabs — the reference runs these at ~88px */
+  --text-stat: clamp(3rem, 7.5vw, 5.5rem);
+  --text-stat--line-height: 0.86;
+  --text-stat--letter-spacing: -0.03em;
+
+  --text-lead: clamp(1rem, 1.15vw, 1.1875rem);
+  --text-lead--line-height: 1.55;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-small: 0.8125rem;
+  --text-small--line-height: 1.5;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.1em;
+
+  --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Hard edges everywhere. The reference measures 0px on every rectangle; the only
+     curves in it are true circles. Keep it that way — a stray rounded-xl reads soft. */
+  --radius-panel: 0px;
+}
+
+/* ── Bands ────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  .band-dark {
+    --surface: #111111;
+    --fg: #ffffff;
+    --muted: #8d92a3;
+    --line: rgba(255, 255, 255, 0.16);
+    --raised: #1a1a1e;
+    --raised-2: #232329;
+    --accent: #ffb224;
+    background: var(--surface);
+    color: var(--fg);
+  }
+  .band-light {
+    --surface: #ffffff;
+    --fg: #111111;
+    --muted: #616677;
+    --line: rgba(17, 17, 17, 0.16);
+    --raised: #f3f3f6;
+    --raised-2: #e7e7ed;
+    --accent: #9a5b00;
+    background: var(--surface);
+    color: var(--fg);
+  }
+
+  html {
+    /* The page opens on a dark hero, so the overscroll area matches it. */
+    --surface: #111111;
+    --fg: #ffffff;
+    --muted: #8d92a3;
+    --line: rgba(255, 255, 255, 0.16);
+    --raised: #1a1a1e;
+    --raised-2: #232329;
+    --accent: #ffb224;
+    background: #111111;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: #111111;
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    overflow-x: hidden;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display type is uppercase by default — this is the single biggest thing that
+     makes the page read industrial rather than SaaS. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 125%;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--color-signal);
+    color: #111111;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #111111;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #33333a;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a4a55;
+  }
+}
+
+/* ── Utilities ────────────────────────────────────────────────────────────── */
+
+@utility container-site {
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 4rem;
+  }
+}
+
+@utility label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/** Flat panel — square, hairline, no blur. */
+@utility panel {
+  background: var(--raised);
+  border: 1px solid var(--color-line);
+}
+
+@utility hairline {
+  border-top: 1px solid var(--color-line);
+}
+
+/** Full-bleed rule that runs edge to edge inside a band. */
+@utility rule {
+  height: 1px;
+  width: 100%;
+  background: var(--color-line);
+}
+
+@utility grid-floor {
+  background-image:
+    linear-gradient(to right, var(--color-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 15%, transparent 78%);
+}
+
+.noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────────── */
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/** Display lines wipe up from a clipped baseline — the reference's signature entrance. */
+@keyframes line-rise {
+  from {
+    transform: translate3d(0, 105%, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+}
+.reveal.in {
+  animation: reveal-up 620ms var(--ease-reveal) forwards;
+}
+.blink {
+  animation: blink 1.6s var(--ease-reveal) infinite;
+}
+.marquee-track {
+  animation: marquee 34s linear infinite;
+}
+
+/** Wrap each display line in .line > span to get the clipped rise. */
+.line {
+  display: block;
+  overflow: hidden;
+}
+.line > span {
+  display: block;
+  transform: translate3d(0, 105%, 0);
+}
+.line.in > span {
+  animation: line-rise 900ms var(--ease-reveal) forwards;
+}
+
+.tilt-scene {
+  perspective: 1400px;
+}
+.tilt-card {
+  transform-style: preserve-3d;
+  transition:
+    transform 520ms var(--ease-reveal),
+    border-color 300ms ease,
+    background 300ms ease;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1;
+  }
+  .line > span {
+    transform: none !important;
+  }
+  .tilt-card {
+    transform: none !important;
+  }
+}

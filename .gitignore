@@ -1,0 +1,24 @@
+# Dependencies / build output (web/.gitignore covers the app subtree too)
+node_modules/
+.next/
+out/
+build/
+
+# macOS
+.DS_Store
+
+# Env & secrets
+.env*
+*.pem
+*.key
+
+# Local tooling config
+.claude/
+
+# ── Internal business documents — deliberately not in this public repo ────────
+# The PRD, technical architecture and growth strategy contain client names,
+# pricing structure and revenue targets. They stay on the machine. If they ever
+# need to be versioned, put them in a private repo, not this one.
+01-BlinksAI-Website-PRD.md
+02-BlinksAI-Technical-Architecture.md
+03-BlinksAI-Growth-Strategy.md
