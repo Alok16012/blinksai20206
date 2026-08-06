@@ -12,7 +12,7 @@ import { setBooting } from "@/lib/boot";
  * past the edges — the page opening through the hole it leaves behind. A camera iris,
  * or a portal: you go *through* it rather than watching a panel move.
  *
- * It runs on first load and on every route change, and takes about a second.
+ * It runs on first load and on every route change, and takes about two seconds.
  *
  * How the hole is made: `.bl-iris` is a circle of zero size carrying a 100vmax
  * `box-shadow`, so the shadow paints everything *outside* the circle and the circle
@@ -30,10 +30,11 @@ import { setBooting } from "@/lib/boot";
  *   an explicit query param is the visitor asking for it.
  */
 
-/** Dark, with the ring struck but not yet moving. */
-const HOLD_MS = 160;
-/** The ring rushing out past the corners. Must match the transitions below. */
-const OPEN_MS = 860;
+/** Dark, with the ring struck and holding before it moves. Long enough to register
+ *  as a beat rather than a flicker. */
+const HOLD_MS = 420;
+/** The ring travelling out past the corners. Must match the transitions below. */
+const OPEN_MS = 1600;
 
 type Phase = "idle" | "shut" | "opening" | "gone";
 
@@ -79,7 +80,10 @@ const css = `
 }
 .bl-shell[data-phase="shut"] .bl-ring {
   opacity: 1;
-  transition: opacity 160ms linear;
+  transform: scale(0.1);
+  transition:
+    opacity 300ms linear,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .bl-shell[data-phase="opening"] .bl-ring {
   transform: scale(14);
@@ -98,7 +102,7 @@ const css = `
 }
 .bl-shell[data-phase="opening"] .bl-ring-trail {
   transform: scale(11);
-  transition-delay: 90ms;
+  transition-delay: 150ms;
 }
 `;
 
