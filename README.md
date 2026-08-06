@@ -36,7 +36,10 @@ repository is public. They are listed in `.gitignore` and stay on the working ma
 
 ## Before launch
 
-`web/README.md` has the full list. The short version: set the real WhatsApp number and
-phone in `lib/content.ts`, wire `POST /api/lead` to the queue (it validates and enforces
-the TRAI consent requirement today, but only logs where the publish belongs), and add
-Turnstile, rate limits and OTP verification.
+`web/README.md` has the full list. The short version: wire `POST /api/lead` to the queue
+(it validates and enforces the TRAI consent requirement today, but only logs where the
+publish belongs), and add Turnstile, rate limits and OTP verification.
+
+Contact details are already live in `lib/content.ts` — that file is the single source for
+the nav, footer, contact page, conversation drawer, the build-time WhatsApp QR and
+`public/llms.txt`.

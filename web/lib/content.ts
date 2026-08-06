@@ -19,9 +19,10 @@ export const site = {
   category: "Growth Engineering",
   /** Owner and founder. The specs were drafted with a different name; this is correct. */
   founder: "Alok Kumar",
-  whatsapp: "919999999999", // TODO: real number before launch
-  phone: "+91 99999 99999",
-  email: "hello@blinksai.com",
+  /** wa.me format: country code, no "+" and no spaces. */
+  whatsapp: "916207077899",
+  phone: "+91 62070 77899",
+  email: "info@binksaiauto.com",
   city: "Nashik, Maharashtra",
   lastDeploy: "3 days ago",
 };
