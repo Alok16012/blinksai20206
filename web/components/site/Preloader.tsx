@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { industries, platforms, site } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useMediaQuery";
+import { setBooting } from "@/lib/boot";
 
 /**
  * Boot screen — the ops console coming up before the shift starts.
@@ -137,6 +138,10 @@ export default function Preloader() {
     shownThisLoad = true;
     if (seen) return;
 
+    // Claimed synchronously, before any IntersectionObserver callback can fire, so no
+    // entrance animation starts underneath the overlay. See lib/boot.ts.
+    setBooting(true);
+
     // Queued, not called here: a synchronous setState in an effect body is a React
     // Compiler lint error in Next 16. A microtask callback is not.
     queueMicrotask(() => setPhase((p) => (p === "idle" ? "boot" : p)));
@@ -154,6 +159,9 @@ export default function Preloader() {
     const leave = () => {
       if (!live) return;
       live = false;
+      // Released here rather than on unmount: the entrance should run *with* the wipe,
+      // not after it, so the page is already moving as the overlay clears.
+      setBooting(false);
       setPhase("exit");
     };
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useSite, type DrawerTab } from "@/lib/store";
 import { usePrefersReducedMotion } from "@/lib/useMediaQuery";
+import { useBooted } from "@/lib/boot";
 
 /* ── Reveal: 28px rise + fade ─────────────────────────────────────────────── */
 
@@ -20,9 +21,13 @@ export function Reveal({
   as?: "div" | "li" | "section" | "span" | "p";
 }) {
   const ref = useRef<HTMLElement | null>(null);
+  /* Held until the boot overlay clears — otherwise this fires and finishes behind it,
+     and the entrance is over before anyone can see it. See lib/boot.ts. */
+  const booted = useBooted();
+
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !booted) return;
     const io = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) {
@@ -34,7 +39,7 @@ export function Reveal({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [booted]);
 
   const El = Tag as unknown as React.ComponentType<{
     ref?: React.Ref<HTMLElement>;
@@ -72,10 +77,11 @@ export function Lines({
 }) {
   const ref = useRef<HTMLElement | null>(null);
   const reduced = usePrefersReducedMotion();
+  const booted = useBooted();
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || reduced) return;
+    if (!el || reduced || !booted) return;
     const io = new IntersectionObserver(
       ([e]) => {
         if (!e.isIntersecting) return;
@@ -86,7 +92,7 @@ export function Lines({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [reduced]);
+  }, [reduced, booted]);
 
   const El = Tag as unknown as React.ComponentType<{
     ref?: React.Ref<HTMLElement>;
@@ -210,10 +216,11 @@ export function Counter({
   const [n, setN] = useState(0);
   const done = useRef(false);
   const reduced = usePrefersReducedMotion();
+  const booted = useBooted();
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || reduced) return;
+    if (!el || reduced || !booted) return;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting || done.current) return;
       done.current = true;
@@ -228,7 +235,7 @@ export function Counter({
     });
     io.observe(el);
     return () => io.disconnect();
-  }, [value, reduced]);
+  }, [value, reduced, booted]);
 
   return (
     <span ref={ref} className={className}>
