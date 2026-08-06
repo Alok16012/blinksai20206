@@ -162,7 +162,14 @@ export default function Preloader() {
 
   /* ── Decide, once ───────────────────────────────────────────────────────── */
   useEffect(() => {
-    if (reduced) return;
+    let force = false;
+    try {
+      force = new URLSearchParams(window.location.search).has("boot");
+    } catch {
+      /* malformed query string — treat as not forced */
+    }
+    // An explicit ?boot is the visitor asking for it, so it outranks the preference.
+    if (reduced && !force) return;
 
     let seen: boolean;
     try {
@@ -172,7 +179,7 @@ export default function Preloader() {
       seen = shownThisLoad;
     }
     shownThisLoad = true;
-    if (seen) return;
+    if (seen && !force) return;
 
     // Claimed synchronously, before any IntersectionObserver callback can fire, so no
     // entrance animation starts underneath the overlay. See lib/boot.ts.
@@ -250,7 +257,10 @@ export default function Preloader() {
   // `reduced` is checked here as well as in the effect: `useSyncExternalStore` reports
   // the server value for the hydration render, so the effect can fire once before the
   // real preference lands. Guarding the render means it is still never seen.
-  if (reduced || phase === "idle" || phase === "gone") return null;
+  // No `reduced` check here on purpose: every skip path above returns before `phase`
+  // leaves "idle", so the phase alone already says whether this screen is showing.
+  // Keeping a second copy of that rule is how the two get out of step.
+  if (phase === "idle" || phase === "gone") return null;
 
   const done = (docReady ? 1 : 0) + (fontsReady ? 1 : 0);
 
