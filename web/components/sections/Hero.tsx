@@ -79,15 +79,33 @@ export default function Hero() {
         <div
           ref={stage}
           className={clsx(
-            "flex h-svh flex-col justify-center overflow-hidden",
+            "flex h-svh flex-col justify-center overflow-hidden pt-16 lg:pt-20",
             pinned && "sticky top-0",
           )}
         >
-          {/* The globe sits behind everything, full bleed. */}
+          {/* The globe is pushed right and bled off the edge, the way the reference
+              frames it — centred it competes with the headline instead of sitting
+              behind it. On phones it drops lower so the copy keeps the top half. */}
           {webgl && (
-            <div className="absolute inset-0" aria-hidden>
+            <div
+              aria-hidden
+              className="absolute -right-[38%] top-[18%] h-[85vw] w-[85vw] sm:-right-[22%] sm:top-1/2 sm:h-[78vh] sm:w-[78vh] sm:-translate-y-1/2 lg:-right-[10%] lg:h-[92vh] lg:w-[92vh]"
+            >
               <Globe progress={progress} tier={tier} active={inView} />
             </div>
+          )}
+
+          {/* Scrim: the limb is bright, and white display type over amber is unreadable.
+              This darkens the left half only, so the globe still reads on the right. */}
+          {webgl && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-[1]"
+              style={{
+                background:
+                  "linear-gradient(100deg, #111 0%, rgba(17,17,17,0.92) 34%, rgba(17,17,17,0.45) 56%, transparent 74%)",
+              }}
+            />
           )}
 
           {/* Falls back to the flat control-room floor when there is no canvas. */}
@@ -96,7 +114,7 @@ export default function Hero() {
           )}
 
           {/* Copy renders before and above the canvas, always (PRD §9 rule 2). */}
-          <div className="container-site pointer-events-none relative z-[2]">
+          <div className="container-site pointer-events-none relative z-[2] max-w-full">
             <Reveal>
               <Eyebrow>Build · Automate · Grow</Eyebrow>
             </Reveal>
@@ -104,7 +122,7 @@ export default function Hero() {
             <Lines
               as="h1"
               delay={60}
-              className="mt-8 max-w-4xl text-d1 font-bold sm:text-d0"
+              className="mt-7 max-w-[16ch] text-d2 font-bold sm:text-d1"
               lines={[
                 "We build",
                 "the software.",
@@ -116,7 +134,7 @@ export default function Hero() {
             />
 
             <Reveal delay={200}>
-              <p className="mt-10 max-w-lg text-lead text-mute">
+              <p className="mt-8 max-w-md text-lead text-mute">
                 Software, automation and marketing from one team.{" "}
                 <span className="text-paper">8 platforms shipped, 42 clients, 6 industries</span> —
                 from the first line of code to the first customer.
@@ -124,7 +142,7 @@ export default function Hero() {
             </Reveal>
 
             <Reveal delay={260}>
-              <div className="pointer-events-auto mt-10 flex flex-col gap-3 sm:flex-row">
+              <div className="pointer-events-auto mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button drawer="details" context="a growth plan">
                   Get a growth plan
                 </Button>
@@ -135,7 +153,7 @@ export default function Hero() {
             </Reveal>
 
             <Reveal delay={320}>
-              <p className="mt-10 flex items-start gap-2.5 font-mono text-[0.75rem] text-mute">
+              <p className="mt-8 flex items-start gap-2.5 font-mono text-[0.75rem] text-mute">
                 <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-mint" />
                 {webgl
                   ? "Drag the globe ⟲ · every arc is a lead landing in Nashik"

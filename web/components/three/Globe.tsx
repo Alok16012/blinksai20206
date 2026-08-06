@@ -116,8 +116,8 @@ function Atmosphere() {
         uniforms: {
           warm: { value: new THREE.Color(C.signal) },
           cool: { value: new THREE.Color(C.violet) },
-          power: { value: 2.6 },
-          strength: { value: 1.35 },
+          power: { value: 4.2 },
+          strength: { value: 0.85 },
         },
         transparent: true,
         blending: THREE.AdditiveBlending,
@@ -127,7 +127,7 @@ function Atmosphere() {
     [],
   );
   return (
-    <mesh scale={1.22} material={mat}>
+    <mesh scale={1.13} material={mat}>
       <sphereGeometry args={[R, 64, 64]} />
     </mesh>
   );
