@@ -145,6 +145,10 @@ function Arc({ from, delay }: { from: { lat: number; lng: number }; delay: numbe
     // Lift the control point off the surface so the arc bows into space.
     const mid = a.clone().add(b).multiplyScalar(0.5);
     const lift = 1 + a.distanceTo(b) * 0.42;
+    // Antipodal endpoints sum to the zero vector, and normalising that yields NaN.
+    // Our pins are all within India so it cannot happen today, but a future city list
+    // should not be able to poison the whole geometry.
+    if (mid.lengthSq() < 1e-8) mid.copy(a).cross(new THREE.Vector3(0, 1, 0));
     mid.normalize().multiplyScalar(R * lift);
     const c = new THREE.QuadraticBezierCurve3(a, mid, b);
     const g = new THREE.BufferGeometry().setFromPoints(c.getPoints(72));
@@ -198,19 +202,35 @@ function Pin({ lat, lng, hub = false }: { lat: number; lng: number; hub?: boolea
 
 /* ── Starfield ────────────────────────────────────────────────────────────── */
 
+/**
+ * Deterministic PRNG (mulberry32). Seeded rather than `Math.random()` so the starfield
+ * is identical across renders and hot reloads — a field that resamples every reload
+ * shimmers distractingly.
+ */
+function rng(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 function Stars({ count = 900 }: { count?: number }) {
   const geo = useMemo(() => {
     const pos = new Float32Array(count * 3);
+    const rand = rng(1337);
     for (let i = 0; i < count; i++) {
-      // Deterministic scatter — Math.random() would resample on every hot reload.
-      const a = i * 12.9898;
-      const r = 9 + ((i * 37) % 60) / 8;
-      const th = (Math.sin(a) * 43758.5453) % (Math.PI * 2);
-      const ph = Math.acos(((Math.cos(a) * 12345.678) % 2000) / 1000 - 1);
-      pos.set(
-        [r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th)],
-        i * 3,
-      );
+      // Uniform on a sphere: cos(phi) must be sampled evenly in [-1, 1]. The previous
+      // version fed acos() a value that ranged to -3, which returns NaN — half the
+      // positions were NaN and three could not compute a bounding sphere.
+      const cosPhi = rand() * 2 - 1;
+      const phi = Math.acos(cosPhi);
+      const theta = rand() * Math.PI * 2;
+      const r = 9 + rand() * 7;
+      const s = Math.sin(phi);
+      pos.set([r * s * Math.cos(theta), r * cosPhi, r * s * Math.sin(theta)], i * 3);
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
