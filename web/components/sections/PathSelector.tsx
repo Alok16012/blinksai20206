@@ -65,7 +65,7 @@ export default function PathSelector() {
                     aria-pressed={on}
                     className={clsx(
                       "group relative flex h-full w-full flex-col items-start p-6 text-left transition-colors duration-300 lg:p-8",
-                      on ? "bg-deck" : "hover:bg-deck",
+                      on ? "bg-deck-2" : "hover:bg-deck",
                     )}
                   >
                     <span
@@ -92,10 +92,14 @@ export default function PathSelector() {
                       {on ? "selected" : when[p.key]}
                     </span>
 
-                    <span className="mt-8 block font-display text-d3 font-bold uppercase [font-stretch:125%]">
+                    {/* Sized so the longest label ("MY FOLLOW‑UP AUTOMATED", 22 chars)
+                        still lands on two lines in a quarter-width cell, and min-h
+                        reserves those two lines so all four titles share a baseline
+                        however short the label is. */}
+                    <span className="mt-8 block min-h-[2.1em] font-display text-[clamp(1.25rem,1.8vw,1.625rem)] font-bold uppercase leading-[1.05] [font-stretch:125%]">
                       {p.need}
                     </span>
-                    <span className="mt-3 block text-small text-mute">{p.detail}</span>
+                    <span className="mt-4 block text-small text-mute">{p.detail}</span>
 
                     <span className="mt-auto block pt-10">
                       <span

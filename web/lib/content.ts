@@ -61,7 +61,7 @@ export const paths: {
   },
   {
     key: "automate",
-    need: "my follow-up automated",
+    need: "my follow‑up automated",
     detail: "WhatsApp, AI voice, social, workflow",
     services: "Answers in 4 seconds, at 11 PM",
     accent: "violet",
