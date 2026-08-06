@@ -2,56 +2,129 @@
 
 import clsx from "clsx";
 import dynamic from "next/dynamic";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Eyebrow, Lines, Reveal, Stat } from "@/components/ui";
-import BoardFallback from "@/components/three/BoardFallback";
 import { useInView, useTier } from "@/lib/capability";
+import { usePrefersReducedMotion } from "@/lib/useMediaQuery";
 import { stats } from "@/lib/content";
 
-const LiveBoard = dynamic(() => import("@/components/three/LiveBoard"), { ssr: false });
+const Globe = dynamic(() => import("@/components/three/Globe"), { ssr: false });
 
+/**
+ * §7.2 — the hero, rebuilt against the reference the owner supplied.
+ *
+ * The shape of it: the section is ~260vh tall and its inner stage is sticky, so the hero
+ * holds still while the page scrolls past it. That scroll drives two things at once —
+ * a camera dive into the globe (see Globe.tsx) and a white curtain that rises to meet
+ * the band below. The dark hero doesn't cut to white; it *becomes* it.
+ *
+ * Everything degrades: reduced motion or a failed capability check drops the pin and the
+ * canvas entirely and renders a plain dark hero with the same copy.
+ */
 export default function Hero() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, "300px");
+  const wrap = useRef<HTMLDivElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const curtain = useRef<HTMLDivElement>(null);
+  const progress = useRef(0);
+
+  const inView = useInView(stage, "200px");
   const tier = useTier();
-  const webgl = tier === "full" || tier === "lite";
+  const reduced = usePrefersReducedMotion();
+  const webgl = (tier === "full" || tier === "lite") && !reduced;
+  const [pinned, setPinned] = useState(false);
+
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el || reduced || !webgl) return;
+
+    let cancelled = false;
+    let kill: (() => void) | undefined;
+
+    (async () => {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      const st = ScrollTrigger.create({
+        trigger: el,
+        start: "top top",
+        end: "bottom bottom",
+        fastScrollEnd: true,
+        onUpdate: (self) => {
+          progress.current = self.progress;
+          // Driven straight from the scroll handler rather than React state: this runs
+          // on every scroll frame and a re-render per frame would be wasteful.
+          if (curtain.current) {
+            const c = Math.max(0, (self.progress - 0.55) / 0.45);
+            curtain.current.style.opacity = String(c);
+          }
+        },
+      });
+      setPinned(true);
+      kill = () => st.kill();
+    })();
+
+    return () => {
+      cancelled = true;
+      kill?.();
+    };
+  }, [reduced, webgl]);
 
   return (
-    /* The band is owned by app/page.tsx — this section only uses tokens. Near-full
-       height: the copy block grows to fill, the stat slabs sit on the bottom edge. */
-    <section className="relative flex min-h-svh flex-col overflow-hidden pt-28 sm:pt-32 lg:pt-40">
-      {/* Control-room floor. Flat — no glow, no glass. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid-floor opacity-70" />
+    <section className="relative">
+      <div ref={wrap} className={clsx("relative", pinned && "h-[260vh]")}>
+        <div
+          ref={stage}
+          className={clsx(
+            "flex h-svh flex-col justify-center overflow-hidden",
+            pinned && "sticky top-0",
+          )}
+        >
+          {/* The globe sits behind everything, full bleed. */}
+          {webgl && (
+            <div className="absolute inset-0" aria-hidden>
+              <Globe progress={progress} tier={tier} active={inView} />
+            </div>
+          )}
 
-      <div className="container-site relative flex flex-1 flex-col justify-center pb-16 lg:pb-24">
-        {/* Copy renders before the canvas, always (PRD §9 rule 2) */}
-        <Reveal>
-          <Eyebrow>Build · Automate · Grow</Eyebrow>
-        </Reveal>
+          {/* Falls back to the flat control-room floor when there is no canvas. */}
+          {!webgl && (
+            <div aria-hidden className="pointer-events-none absolute inset-0 grid-floor opacity-70" />
+          )}
 
-        {/* One array entry per line — each wipes up from its own clipped baseline.
-            Caps and 0.9 leading come from the base layer; don't type them in caps. */}
-        <Lines as="h1" delay={60} className="mt-8 text-d1 font-bold sm:text-d0" lines={[
-            "We build",
-            "the software.",
-            <span key="fill" className="text-accent">
-              Then we fill it
-            </span>,
-            "with customers.",
-          ]} />
+          {/* Copy renders before and above the canvas, always (PRD §9 rule 2). */}
+          <div className="container-site pointer-events-none relative z-[2]">
+            <Reveal>
+              <Eyebrow>Build · Automate · Grow</Eyebrow>
+            </Reveal>
 
-        <div className="mt-12 grid gap-x-10 gap-y-12 lg:mt-16 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <Reveal delay={180}>
-              <p className="max-w-lg text-lead text-mute">
+            <Lines
+              as="h1"
+              delay={60}
+              className="mt-8 max-w-4xl text-d1 font-bold sm:text-d0"
+              lines={[
+                "We build",
+                "the software.",
+                <span key="fill" className="text-accent">
+                  Then we fill it
+                </span>,
+                "with customers.",
+              ]}
+            />
+
+            <Reveal delay={200}>
+              <p className="mt-10 max-w-lg text-lead text-mute">
                 Software, automation and marketing from one team.{" "}
                 <span className="text-paper">8 platforms shipped, 42 clients, 6 industries</span> —
                 from the first line of code to the first customer.
               </p>
             </Reveal>
 
-            <Reveal delay={240}>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Reveal delay={260}>
+              <div className="pointer-events-auto mt-10 flex flex-col gap-3 sm:flex-row">
                 <Button drawer="details" context="a growth plan">
                   Get a growth plan
                 </Button>
@@ -61,52 +134,31 @@ export default function Hero() {
               </div>
             </Reveal>
 
-            <Reveal delay={300}>
-              <p className="mt-8 flex items-start gap-2.5 font-mono text-[0.75rem] text-mute">
+            <Reveal delay={320}>
+              <p className="mt-10 flex items-start gap-2.5 font-mono text-[0.75rem] text-mute">
                 <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-mint" />
-                Replies on WhatsApp in ~4 seconds — including at 11 PM
+                {webgl
+                  ? "Drag the globe ⟲ · every arc is a lead landing in Nashik"
+                  : "Replies on WhatsApp in ~4 seconds — including at 11 PM"}
               </p>
             </Reveal>
           </div>
 
-          {/* The Live Board — square frame, hairline border */}
-          <div className="lg:col-span-8">
-            <div
-              ref={ref}
-              className="relative aspect-[4/3] w-full overflow-hidden border border-line bg-deck sm:aspect-[16/10]"
-            >
-              {webgl ? (
-                <LiveBoard tier={tier} active={inView} />
-              ) : (
-                <div className="absolute inset-0 p-3 sm:p-4">
-                  <BoardFallback />
-                </div>
-              )}
-
-              {/* Text alternative for the canvas — WCAG 2.1 AA (PRD §12) */}
-              {webgl && (
-                <p className="sr-only">
-                  Live operations board, sample feed: lead captured in Nashik at T plus 0 seconds,
-                  WhatsApp sent at T plus 4 seconds, AI voice call answered in Marathi at T plus 38
-                  seconds, demo booked at T plus 2 minutes. Four lanes: build, automate, market,
-                  measure.
-                </p>
-              )}
-
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-4">
-                <span className="label border border-line bg-ink px-3 py-2 text-mute">
-                  {webgl ? "Drag to rotate ⟲ · click a lane" : "Live board"}
-                </span>
-                <span className="label border border-line bg-ink px-3 py-2 text-mute">
-                  Sample feed
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* The handoff. Rises with the dive so the dark hero becomes the white band
+              below rather than cutting to it. */}
+          <div
+            ref={curtain}
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-[3] opacity-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.65) 55%, #ffffff 100%)",
+            }}
+          />
         </div>
       </div>
 
-      {/* Trust strip — stat slabs on the band's bottom edge, split by hairlines */}
+      {/* Trust strip — stat slabs, split by hairlines */}
       <div className="relative border-t border-line">
         <div className="container-site">
           <ul className="grid grid-cols-2 lg:grid-cols-4">
