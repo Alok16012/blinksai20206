@@ -1,0 +1,23 @@
+# Netlify build configuration.
+#
+# The app lives in `web/`, not at the repository root. Without `base` Netlify looks at
+# the root, finds no package.json, detects no framework, runs no build, and publishes an
+# empty directory — which is why every path returned 404.
+#
+# `publish` is deliberately not set: the Next.js runtime resolves the output directory
+# itself, and hardcoding it is the usual second mistake (its meaning relative to `base`
+# has changed between Netlify versions).
+
+[build]
+  base = "web"
+  command = "npm run build"
+
+[build.environment]
+  # Next.js 16 requires >= 20.9.0. Pin it rather than inherit whatever the build image
+  # currently defaults to.
+  NODE_VERSION = "22"
+
+# Declared explicitly rather than relying on framework auto-detection, which is less
+# reliable when the app is in a subdirectory. Netlify installs this itself.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
