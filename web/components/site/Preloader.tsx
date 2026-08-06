@@ -31,8 +31,9 @@ import { setBooting } from "@/lib/boot";
 const SESSION_KEY = "blinksai.booted";
 /** Never longer than this, no matter what is still in flight. */
 const HARD_CAP_MS = 2000;
-/** Must match the transform transition in the stylesheet below. */
-const EXIT_MS = 600;
+/** Must outlast the aperture below: 260ms delay + 1150ms travel, plus a little slack
+ *  so the lids are fully off-screen before the overlay unmounts. */
+const EXIT_MS = 1550;
 
 /**
  * Fallback for browsers where `sessionStorage` throws (private mode, cookies blocked).
@@ -67,23 +68,58 @@ const bootLines: { t: string; line: string }[] = [
  * the only new keyframe on the site.
  */
 const css = `
+/* The exit is an aperture, not a wipe.
+   The brand mark is a *blink* — an eye with a smile under it — so the boot screen
+   leaves the way an eye opens: content dims, a thin amber slit strikes across the
+   centre, then the two halves part and the world behind is simply there. */
 .bl-shell {
-  transition:
-    transform 600ms var(--ease-reveal),
-    opacity 340ms linear 220ms;
+  pointer-events: auto;
 }
 .bl-shell[data-exit="true"] {
-  transform: translate3d(0, -100%, 0);
-  opacity: 0;
   pointer-events: none;
 }
+
+/* The two lids. They cover the screen, then retract to the top and bottom edges. */
+.bl-lid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50.5%; /* slight overlap so no hairline of the page shows through the seam */
+  background: var(--surface);
+  will-change: transform;
+  transition: transform 1150ms cubic-bezier(0.76, 0, 0.24, 1) 260ms;
+}
+.bl-lid-top { top: 0; }
+.bl-lid-bottom { bottom: 0; }
+.bl-shell[data-exit="true"] .bl-lid-top { transform: translate3d(0, -100%, 0); }
+.bl-shell[data-exit="true"] .bl-lid-bottom { transform: translate3d(0, 100%, 0); }
+
+/* The slit: a hairline that strikes out across the seam just before the lids part. */
+.bl-slit {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: translateY(-50%) scaleX(0);
+  background: linear-gradient(90deg, transparent, var(--color-signal), transparent);
+  opacity: 0;
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 260ms linear 900ms;
+}
+.bl-shell[data-exit="true"] .bl-slit {
+  transform: translateY(-50%) scaleX(1);
+  opacity: 1;
+}
+
 .bl-inner {
   transition:
-    transform 600ms var(--ease-reveal),
+    transform 420ms var(--ease-reveal),
     opacity 260ms linear;
 }
 .bl-shell[data-exit="true"] .bl-inner {
-  transform: translate3d(0, -2.5rem, 0);
+  transform: translate3d(0, -1.25rem, 0);
   opacity: 0;
 }
 .bl-dots {
@@ -226,9 +262,15 @@ export default function Preloader() {
       data-exit={phase === "exit"}
       // `band-dark` is forced: the boot screen is always near-black, whatever band the
       // page happens to open on underneath it.
-      className="band-dark bl-shell noise fixed inset-0 z-[200] overflow-hidden bg-ink select-none"
+      className="band-dark bl-shell noise fixed inset-0 z-[200] overflow-hidden select-none"
     >
       <style>{css}</style>
+
+      {/* The lids carry the background; the shell behind them is transparent, so the
+          moment they part the page underneath is already painted and simply appears. */}
+      <div className="bl-lid bl-lid-top" />
+      <div className="bl-lid bl-lid-bottom" />
+      <div className="bl-slit" />
 
       <div className="bl-dots pointer-events-none absolute inset-0" />
 
