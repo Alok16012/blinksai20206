@@ -4,13 +4,15 @@
 # the root, finds no package.json, detects no framework, runs no build, and publishes an
 # empty directory — which is why every path returned 404.
 #
-# `publish` is deliberately not set: the Next.js runtime resolves the output directory
-# itself, and hardcoding it is the usual second mistake (its meaning relative to `base`
-# has changed between Netlify versions).
+# `publish` MUST be set. Left unset, Netlify defaults it to the base directory, so
+# publish == base and @netlify/plugin-nextjs aborts with "Your publish directory cannot
+# be the same as the base directory of your site". It is resolved relative to `base`,
+# so ".next" means "web/.next".
 
 [build]
   base = "web"
   command = "npm run build"
+  publish = ".next"
 
 [build.environment]
   # Next.js 16 requires >= 20.9.0. Pin it rather than inherit whatever the build image

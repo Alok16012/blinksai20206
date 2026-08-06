@@ -3,6 +3,9 @@ node_modules/
 .next/
 out/
 build/
+# Netlify build artifacts — regenerated on every deploy, and `netlify build` writes
+# them locally too.
+.netlify/
 
 # macOS
 .DS_Store
