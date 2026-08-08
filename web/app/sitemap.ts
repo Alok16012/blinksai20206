@@ -47,5 +47,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     /* Company */
     { url: `${SITE}/about`, lastModified, changeFrequency: "yearly", priority: 0.5 },
     { url: `${SITE}/contact`, lastModified, changeFrequency: "yearly", priority: 0.6 },
+    { url: `${SITE}/privacy`, lastModified, changeFrequency: "yearly", priority: 0.3 },
   ];
 }

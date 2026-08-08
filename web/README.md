@@ -109,7 +109,7 @@ numbers are removed rather than softened. Specifically:
 - The hero event feed is labelled **sample** on the board itself, per PRD §6.
 - Pricing bands are the ones in the Growth Strategy; they are the only monetary figures here.
 - Contact details in `lib/content.ts` are live: `+91 62070 77899` (phone and WhatsApp) and
-  `info@binksaiauto.com`. They are the single source — the nav, footer, contact page, drawer,
+  `info@blinksaiauto.com`. They are the single source — the nav, footer, contact page, drawer,
   the build-time WhatsApp QR and `public/llms.txt` all read from there.
 
 ## Not wired yet (deliberately — PRD §15 sequencing)
