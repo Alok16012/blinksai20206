@@ -29,8 +29,8 @@ export const site = {
   /** Owner and founder. The specs were drafted with a different name; this is correct. */
   founder: "Alok Kumar",
   /** wa.me format: country code, no "+" and no spaces. */
-  whatsapp: "916207077899",
-  phone: "+91 62070 77899",
+  whatsapp: "919229961418",
+  phone: "+91 92299 61418",
   email: "info@blinksaiauto.com",
   city: "Nashik, Maharashtra",
   lastDeploy: "3 days ago",
