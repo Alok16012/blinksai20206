@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { useSite, type DrawerTab } from "@/lib/store";
 import { site } from "@/lib/content";
+import { reportConversion } from "@/lib/gtag";
 
 const TABS: { key: DrawerTab; label: string; note: string }[] = [
   { key: "whatsapp", label: "WhatsApp", note: "Reply in ~4s" },
@@ -68,6 +69,13 @@ export default function ConversationDrawer() {
         body: JSON.stringify({ ...data, kind, context, path: location.pathname }),
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Something broke");
+      /* Only on a 2xx. Firing on submit would count every failed and
+         rate-limited attempt as a lead, and Google would optimise the
+         campaign towards whatever produces broken submissions. */
+      reportConversion(kind === "call" ? "demoBooked" : "formSubmit", {
+        value: kind === "call" ? 1500 : 800,
+        currency: "INR",
+      });
       setSent(kind);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something broke. WhatsApp us instead?");

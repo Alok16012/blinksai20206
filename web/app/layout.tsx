@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Archivo, Inter_Tight, IBM_Plex_Mono, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
-import { site } from "@/lib/content";
+import { SITE_URL, site } from "@/lib/content";
+import Analytics from "@/components/site/Analytics";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import CursorTrail from "@/components/site/CursorTrail";
@@ -34,7 +35,7 @@ const notoDeva = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://blinksai.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "BlinksAI — We build the software. Then we fill it with customers.",
     template: "%s · BlinksAI",
@@ -77,8 +78,8 @@ const orgSchema = {
   "@type": "Organization",
   name: "BlinksAI",
   description: site.sub,
-  url: "https://blinksai.com",
-  logo: "https://blinksai.com/blinksai-mark-512.png",
+  url: SITE_URL,
+  logo: `${SITE_URL}/blinksai-mark-512.png`,
   areaServed: "IN",
   founder: { "@type": "Person", name: site.founder },
   knowsAbout: [
@@ -123,6 +124,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <CursorTrail />
         <DrawerHost />
         <MobileBar />
+        <Analytics />
       </body>
     </html>
   );

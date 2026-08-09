@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { notFound } from "next/navigation";
-import { platforms, process, type Platform } from "@/lib/content";
+import { SITE_URL, platforms, process, type Platform } from "@/lib/content";
 import { Button, Eyebrow, Reveal, Tilt } from "@/components/ui";
 import ModuleStackFrame, { ModuleStackCanvas } from "@/components/three/ModuleStackFrame";
 
@@ -25,7 +25,7 @@ import ModuleStackFrame, { ModuleStackCanvas } from "@/components/three/ModuleSt
  * web/public/platforms/README.md.
  */
 
-const SITE_URL = "https://blinksai.com";
+/* Canonical origin comes from lib/content — see SITE_URL there. */
 
 /** Same accent the platform gets in the rail, derived from its position in the list. */
 function stackAccent(slug: string) {

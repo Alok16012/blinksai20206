@@ -8,7 +8,9 @@ import { automations, platforms } from "@/lib/content";
  * automation URLs are derived from lib/content.ts so a new entry there is
  * indexed without touching this file.
  */
-const SITE = "https://blinksai.com";
+import { SITE_URL } from "@/lib/content";
+
+const SITE = SITE_URL;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();

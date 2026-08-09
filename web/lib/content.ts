@@ -12,6 +12,15 @@ export type Pillar = "build" | "automate" | "market" | "measure" | "improve";
 
 /* ── Global ─────────────────────────────────────────────────────────────── */
 
+/**
+ * Canonical origin, single source of truth.
+ *
+ * The live site is blinksaiauto.com. Four files previously hardcoded
+ * blinksai.com, which sent every canonical URL, the sitemap, robots.txt
+ * and the OG image to a domain that does not serve the site.
+ */
+export const SITE_URL = "https://www.blinksaiauto.com";
+
 export const site = {
   name: "BlinksAI",
   tagline: "We build the software. Then we fill it with customers.",
