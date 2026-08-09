@@ -19,7 +19,7 @@ export type Pillar = "build" | "automate" | "market" | "measure" | "improve";
  * blinksai.com, which sent every canonical URL, the sitemap, robots.txt
  * and the OG image to a domain that does not serve the site.
  */
-export const SITE_URL = "https://www.blinksaiauto.com";
+export const SITE_URL = "https://blinksaiauto.com";
 
 export const site = {
   name: "BlinksAI",
