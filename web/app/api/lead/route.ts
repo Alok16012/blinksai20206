@@ -38,6 +38,16 @@ const PHONE = /^[+]?[\d\s-]{8,16}$/;
  */
 const WEBHOOK = process.env.LEAD_WEBHOOK_URL;
 
+/**
+ * Shared secret, travelling in the body rather than a header.
+ *
+ * Not a style choice: Google Apps Script's doPost cannot read custom
+ * request headers at all — only the body and query string reach it. A
+ * Web App deployed as "anyone" is otherwise a public write endpoint for
+ * whoever finds the URL.
+ */
+const WEBHOOK_SECRET = process.env.LEAD_WEBHOOK_SECRET;
+
 async function enqueue(job: string, payload: unknown) {
   console.log(`[queue] ${job}`, payload);
 
@@ -55,7 +65,11 @@ async function enqueue(job: string, payload: unknown) {
     const res = await fetch(WEBHOOK, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ job, ...(payload as object) }),
+      body: JSON.stringify({
+        job,
+        ...(WEBHOOK_SECRET ? { secret: WEBHOOK_SECRET } : {}),
+        ...(payload as object),
+      }),
       // The visitor is already waiting; never hang the response on a slow
       // third party. The caller does not await this anyway.
       signal: AbortSignal.timeout(8000),
