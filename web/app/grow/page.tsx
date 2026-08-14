@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Button, Eyebrow, Lines, Reveal, SectionHead } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -217,7 +218,14 @@ export default function GrowPage() {
                       <dt className="label text-mute">Price</dt>
                       <dd className="mt-2 text-small">
                         Growth retainers start at ₹40,000 per month, and are never discounted. If the
-                        price does not fit, the scope moves instead.
+                        price does not fit, the scope moves instead — the{" "}
+                        <Link
+                          href="/grow/digital-marketing"
+                          className="text-accent underline underline-offset-4"
+                        >
+                          digital marketing package
+                        </Link>{" "}
+                        runs content and ads for ₹16,000 a month without the CRM measurement work.
                       </dd>
                     </div>
                     <div>

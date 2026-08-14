@@ -555,6 +555,7 @@ export const megaMenu: {
     stat: "Traced to closed deals",
     accent: "mint",
     links: [
+      { label: "Digital marketing", href: "/grow/digital-marketing", note: "From ₹16k / month" },
       { label: "Meta Ads", href: "/grow", note: "Click-to-WhatsApp" },
       { label: "Google Ads", href: "/grow", note: "High-intent search" },
       { label: "Creative & video", href: "/grow", note: "Reels, ads, edits" },

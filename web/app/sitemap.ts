@@ -43,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     /* Grow + Automate */
     { url: `${SITE}/grow`, lastModified, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE}/grow/digital-marketing`, lastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE}/automate`, lastModified, changeFrequency: "monthly", priority: 0.8 },
     ...automationPages,
 

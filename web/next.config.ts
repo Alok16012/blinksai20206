@@ -14,6 +14,14 @@ const nextConfig: NextConfig = {
   // The private ranges below cover a normal home/office network. This has no effect on
   // `next build` or production.
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.16.*.*", "*.local"],
+
+  // The digital marketing proposal deck is a self-contained static file in `public/`,
+  // not a React route — it is a sales artefact sent to a prospect over WhatsApp, and it
+  // is kept verbatim rather than rebuilt. The rewrite is only so the link that gets
+  // pasted into a chat reads `/proposal` instead of `/proposal.html`.
+  async rewrites() {
+    return [{ source: "/proposal", destination: "/proposal.html" }];
+  },
 };
 
 export default nextConfig;
