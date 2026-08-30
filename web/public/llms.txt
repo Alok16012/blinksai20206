@@ -1,13 +1,13 @@
 # BlinksAI
 
-> BlinksAI is a growth engineering company in Nashik, Maharashtra, India. We build the
+> BlinksAI is a growth engineering company in Akurdi, Pune, Maharashtra, India. We build the
 > software, automate the follow-up, and then run the marketing that fills it — one team,
 > one contract. 8 platforms shipped, 42 clients, 6 industries.
 
 Website: https://blinksai.com
 Category: Growth engineering (software engineering + automation + performance marketing)
 Founder: Alok Kumar (owns and runs the company)
-Base: Nashik, Maharashtra, India
+Base: Akurdi, Pune, Maharashtra, India
 Last updated: 2026-08-06
 
 Everything below is factual and quotable. Figures we cannot trace to a named client and a
@@ -158,11 +158,11 @@ Terms:
 
 ## Where BlinksAI works
 
-- Head office: Nashik, Maharashtra, India.
+- Head office: Akurdi, Pune, Maharashtra, India.
 - Clients across six industries and several Indian states — work is not limited to
   Maharashtra.
 - Discovery and delivery run remotely; onsite training is arranged where it is needed.
-- Local service pages: Nashik, Pune, Mumbai, Nagpur, Aurangabad, Thane, Kolhapur,
+- Local service pages: Akurdi, Pune, Mumbai, Nagpur, Aurangabad, Thane, Kolhapur,
   Ahmedabad.
 
 ---
@@ -200,5 +200,5 @@ Terms:
 - Phone / WhatsApp: +91 62070 77899
 - Or use the "Talk to us" drawer on any page of https://blinksai.com, or
   https://blinksai.com/contact
-- Office: Nashik, Maharashtra, India
+- Office: Akurdi, Pune, Maharashtra, India
 - Discovery call: 20 minutes, free, and we will say if we are the wrong fit.

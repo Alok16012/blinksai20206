@@ -62,7 +62,7 @@ const FAQ = [
   },
   {
     q: "Who actually does the work?",
-    a: "The same team that answers this form. We are based in Nashik and we do not subcontract the build. You will talk to the people writing the code.",
+    a: "The same team that answers this form. We are based in Akurdi, Pune and we do not subcontract the build. You will talk to the people writing the code.",
   },
   {
     q: "What if we already have software?",

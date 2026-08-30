@@ -5,7 +5,7 @@ import { site, stats } from "@/lib/content";
 export const metadata: Metadata = {
   title: "About — a growth engineering company",
   description:
-    "BlinksAI builds the system, automates it, and fills it with customers. Eight platforms in production across six industries, 42 clients, one team and one invoice. Based in Nashik, Maharashtra.",
+    "BlinksAI builds the system, automates it, and fills it with customers. Eight platforms in production across six industries, 42 clients, one team and one invoice. Based in Akurdi, Pune, Maharashtra.",
   alternates: { canonical: "/about" },
 };
 

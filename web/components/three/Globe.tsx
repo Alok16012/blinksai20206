@@ -17,12 +17,12 @@ import type { Tier } from "@/lib/capability";
  * band below.
  *
  * It carries information (PRD §9 rule 1): every arc runs from a city BlinksAI actually
- * lists to the hub in Nashik, and each one is a lead arriving. Nothing here is a
+ * lists to the hub in Akurdi, and each one is a lead arriving. Nothing here is a
  * floating sphere for decoration.
  */
 
-/* Real coordinates. The hub is Nashik — where the company is. */
-const HUB = { name: "Nashik", lat: 19.9975, lng: 73.7898 };
+/* Real coordinates. The hub is Akurdi — where the company is. */
+const HUB = { name: "Akurdi", lat: 18.65, lng: 73.76 };
 const CITIES = [
   { name: "Mumbai", lat: 19.076, lng: 72.8777 },
   { name: "Pune", lat: 18.5204, lng: 73.8567 },

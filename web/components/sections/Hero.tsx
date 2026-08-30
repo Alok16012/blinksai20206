@@ -156,7 +156,7 @@ export default function Hero() {
               <p className="mt-8 flex items-start gap-2.5 font-mono text-[0.75rem] text-mute">
                 <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-mint" />
                 {webgl
-                  ? "Drag the globe ⟲ · every arc is a lead landing in Nashik"
+                  ? "Drag the globe ⟲ · every arc is a lead landing in Akurdi"
                   : "Replies on WhatsApp in ~4 seconds — including at 11 PM"}
               </p>
             </Reveal>

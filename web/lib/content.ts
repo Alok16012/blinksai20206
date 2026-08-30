@@ -32,7 +32,7 @@ export const site = {
   whatsapp: "919229961418",
   phone: "+91 92299 61418",
   email: "info@blinksaiauto.com",
-  city: "Nashik, Maharashtra",
+  city: "Akurdi, Pune, Maharashtra 411035",
   lastDeploy: "3 days ago",
 };
 
@@ -504,7 +504,7 @@ export const sampleEvents: {
   meta: string;
   t: string;
 }[] = [
-  { lane: "market", label: "lead captured", meta: "Nashik · meta ads", t: "T+0s" },
+  { lane: "market", label: "lead captured", meta: "Akurdi · meta ads", t: "T+0s" },
   { lane: "automate", label: "whatsapp sent", meta: "auto · template", t: "T+4s" },
   { lane: "automate", label: "ai call answered", meta: "Marathi", t: "T+38s" },
   { lane: "measure", label: "lead qualified", meta: "score 82", t: "T+1m" },

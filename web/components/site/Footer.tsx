@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { industries, megaMenu, platforms, site } from "@/lib/content";
 
-const CITIES = ["Nashik", "Pune", "Mumbai", "Nagpur", "Aurangabad", "Thane", "Kolhapur", "Ahmedabad"];
+const CITIES = ["Akurdi", "Pune", "Mumbai", "Nagpur", "Aurangabad", "Thane", "Kolhapur", "Ahmedabad"];
 
 export default function Footer() {
   return (
